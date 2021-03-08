@@ -15,7 +15,8 @@ func NewUser(username string, email string, password string) (structs.User, erro
 		return structs.User{}, err
 	}
 
-	_, err = database.Exec("insert into users (id, username, email, password_hash, permission, created_at) values ($1, $2, $3, $4, $5, 0);", id.String(), username, email, hash)
+	now := time.Now()
+	_, err = database.Exec("insert into users (id, username, email, password_hash, permission, created_at) values ($1, $2, $3, $4, 0, $5);", id.String(), username, email, hash, now)
 	if err != nil {
 		return structs.User{}, err
 	}
@@ -25,11 +26,12 @@ func NewUser(username string, email string, password string) (structs.User, erro
 		Username:     username,
 		Email:        email,
 		PasswordHash: hash,
-		Created:      time.Now(),
+		Created:      now,
 		Permission:   0,
 	}, nil
 }
 
+/*
 func GetUserByUsername(username string) (structs.User, error) {
 	row := database.QueryRow("select * from users where username = $1;", username)
 	if row.Err() != nil {
@@ -44,7 +46,9 @@ func GetUserByUsername(username string) (structs.User, error) {
 
 	return user, nil
 }
+*/
 
+/*
 func GetUserByEmail(email string ) (structs.User, error) {
 	row := database.QueryRow("select * from users where email = $1;", email)
 	if row.Err() != nil {
@@ -60,7 +64,9 @@ func GetUserByEmail(email string ) (structs.User, error) {
 	return user, nil
 }
 
-func GetUserById(id string ) (structs.User, error) {
+*/
+
+func GetUserById(id string) (structs.User, error) {
 	row := database.QueryRow("select * from users where id = $1;", id)
 	if row.Err() != nil {
 		return structs.User{}, row.Err()
@@ -75,6 +81,7 @@ func GetUserById(id string ) (structs.User, error) {
 	return user, nil
 }
 
+/*
 func Authenticate(username string, password string) (structs.User, bool, error) {
 	// get user by username
 	user, err := GetUserByUsername(username)
@@ -94,7 +101,7 @@ func Authenticate(username string, password string) (structs.User, bool, error) 
 	// if no error, return authenticated
 	return structs.User{}, true, nil
 }
-
+*/
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

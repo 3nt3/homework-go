@@ -27,8 +27,6 @@ func InitDatabase() error {
 	}
 	database = foo
 
-	// close at the end
-	defer func() { _ = database.Close() }()
 
 	err = database.Ping()
 	if err != nil {
@@ -43,15 +41,25 @@ func InitDatabase() error {
 	if err != nil {
 		return err
 	}
-
+	logging.InfoLogger.Printf("tables created successfully")
 
 	return nil
 }
 
+func CloseDB() error {
+	return database.Close()
+}
+
 func initializeTables() error {
-	_, err := database.Exec("CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY UNIQUE, username text UNIQUE, email text UNIQUE, password_hash text, created timestamp, permission int)")
+	_, err := database.Exec("CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY UNIQUE, username text UNIQUE, email text UNIQUE, password_hash text, created_at timestamp, permission int)")
 	if err != nil {
 		return err
 	}
+
+	_, err = database.Exec("CREATE TABLE IF NOT EXISTS assignments (id text PRIMARY KEY UNIQUE, content text, course_id int, due_date timestamp, creator_id int, created_at timestamp)")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
