@@ -5,8 +5,11 @@ import (
 	"time"
 )
 
+// max age in days
+const MaxSessionAge int = 90
+
 type User struct {
-	Id           ksuid.KSUID `json:"id"`
+	ID           ksuid.KSUID `json:"id"`
 	Username     string      `json:"username"`
 	Email        string      `json:"email"`
 	PasswordHash string
@@ -15,7 +18,7 @@ type User struct {
 }
 
 type CleanUser struct {
-	Id         ksuid.KSUID `json:"id"`
+	ID         ksuid.KSUID `json:"id"`
 	Username   string      `json:"username"`
 	Email      string      `json:"email"`
 	Created    time.Time   `json:"created"`
@@ -24,10 +27,16 @@ type CleanUser struct {
 
 func (u User) GetClean() CleanUser {
 	return CleanUser{
-		Id:         u.Id,
+		ID:         u.ID,
 		Username:   u.Username,
 		Email:      u.Email,
 		Created:    u.Created,
 		Permission: u.Permission,
 	}
+}
+
+type Session struct {
+	UID     ksuid.KSUID `json:"uid"`
+	UserID  ksuid.KSUID `json:"user_id"`
+	Created time.Time   `json:"created"`
 }
