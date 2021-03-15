@@ -9,8 +9,8 @@
 - [ ] `GET` `/username-taken/{username}` is `{username}` taken?
 
 ## assignment
-- [ ] `POST` `/assignment` creates new assignment
-- [ ] `DELETE` `/assignment` deletes assignment
+- [x] `POST` `/assignment` creates new assignment
+- [x] `DELETE` `/assignment?id=` deletes assignment
 
 ## course
 - [ ] `GET` `/courses/search/{searchterm}` 

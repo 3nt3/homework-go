@@ -22,7 +22,7 @@ func NewUser(username string, email string, password string) (structs.User, erro
 	}
 
 	return structs.User{
-		Id:           id,
+		ID:           id,
 		Username:     username,
 		Email:        email,
 		PasswordHash: hash,
@@ -31,7 +31,6 @@ func NewUser(username string, email string, password string) (structs.User, erro
 	}, nil
 }
 
-/*
 func GetUserByUsername(username string) (structs.User, error) {
 	row := database.QueryRow("select * from users where username = $1;", username)
 	if row.Err() != nil {
@@ -39,14 +38,13 @@ func GetUserByUsername(username string) (structs.User, error) {
 	}
 
 	var user structs.User
-	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
 	if err != nil {
 		return structs.User{}, err
 	}
 
 	return user, nil
 }
-*/
 
 /*
 func GetUserByEmail(email string ) (structs.User, error) {
@@ -56,7 +54,7 @@ func GetUserByEmail(email string ) (structs.User, error) {
 	}
 
 	var user structs.User
-	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
 	if err != nil {
 		return structs.User{}, err
 	}
@@ -73,7 +71,7 @@ func GetUserById(id string) (structs.User, error) {
 	}
 
 	var user structs.User
-	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
 	if err != nil {
 		return structs.User{}, err
 	}
@@ -81,7 +79,6 @@ func GetUserById(id string) (structs.User, error) {
 	return user, nil
 }
 
-/*
 func Authenticate(username string, password string) (structs.User, bool, error) {
 	// get user by username
 	user, err := GetUserByUsername(username)
@@ -101,7 +98,30 @@ func Authenticate(username string, password string) (structs.User, bool, error) 
 	// if no error, return authenticated
 	return structs.User{}, true, nil
 }
-*/
+
+func GetUserBySession(sessionId string) (structs.User, bool, error) {
+	row := database.QueryRow("SELECT * FROM sessions WHERE uid = $1", sessionId)
+	if row.Err() != nil {
+		return structs.User{}, false, row.Err()
+	}
+
+	session := structs.Session{}
+	err := row.Scan(&session.UID, &session.UserID, &session.Created)
+	if err != nil {
+		return structs.User{}, false, err
+	}
+
+	oldestPossible := time.Now().AddDate(0, 0, -structs.MaxSessionAge)
+	if !session.Created.After(oldestPossible) {
+		return structs.User{}, false, nil
+	}
+
+	user, err := GetUserById(session.UserID.String())
+
+	go deleteOldSessions(structs.MaxSessionAge)
+
+	return user, true, err
+}
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

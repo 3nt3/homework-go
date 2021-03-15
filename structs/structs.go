@@ -40,3 +40,13 @@ type Session struct {
 	UserID  ksuid.KSUID `json:"user_id"`
 	Created time.Time   `json:"created"`
 }
+
+type Assignment struct {
+	UID        ksuid.KSUID `json:"uid"`
+	Creator    ksuid.KSUID `json:"creator"`
+	Created    time.Time   `json:"created"`
+	Title      string      `json:"title"`
+	DueDate    time.Time   `json:"due_date"`
+	Course     int         `json:"course"`
+	FromMoodle bool        `json:"from_moodle"`
+}

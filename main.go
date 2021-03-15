@@ -12,7 +12,7 @@ import (
 func main() {
 	logging.InitLoggers()
 
-	err := db.InitDatabase()
+	err := db.InitDatabase(false)
 	if err != nil {
 		logging.ErrorLogger.Printf("error connecting to db: %v\n", err)
 		return
@@ -20,7 +20,11 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/user", routes.NewUser).Methods("POST")
+	r.HandleFunc("/user", routes.GetUser).Methods("GET")
 	r.HandleFunc("/user/{id}", routes.GetUserById).Methods("GET")
+	r.HandleFunc("/user/login", routes.Login).Methods("POST")
+	r.HandleFunc("/assignment", routes.CreateAssignment).Methods("POST")
+	r.HandleFunc("/assignment", routes.DeleteAssignment).Methods("DELETE")
 
 	logging.InfoLogger.Println("started server on port :8000")
 	logging.ErrorLogger.Fatalln(http.ListenAndServe(":8000", r).Error())

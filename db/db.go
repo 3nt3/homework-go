@@ -17,16 +17,21 @@ const (
 
 var database *sql.DB
 
-func InitDatabase() error {
+func InitDatabase(testing bool) error {
 	logging.InfoLogger.Printf("connecting to database...\n")
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+
+	var psqlconn string
+	if !testing {
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	} else {
+		psqlconn = "host=localhost port=5432 user=homework_testing password=testing dbname=homework_testing sslmode=disable"
+	}
 
 	foo, err := sql.Open("postgres", psqlconn)
 	if err != nil {
 		return err
 	}
 	database = foo
-
 
 	err = database.Ping()
 	if err != nil {
@@ -35,6 +40,10 @@ func InitDatabase() error {
 
 	logging.InfoLogger.Printf("connection to database successful\n")
 
+	if testing {
+		logging.InfoLogger.Printf("dropping tables /bc testing")
+		_ = DropTables()
+	}
 
 	logging.InfoLogger.Printf("creating tables...\n")
 	err = initializeTables()
@@ -46,9 +55,6 @@ func InitDatabase() error {
 	return nil
 }
 
-func CloseDB() error {
-	return database.Close()
-}
 
 func initializeTables() error {
 	_, err := database.Exec("CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY UNIQUE, username text UNIQUE, email text UNIQUE, password_hash text, created_at timestamp, permission int)")
@@ -56,10 +62,20 @@ func initializeTables() error {
 		return err
 	}
 
-	_, err = database.Exec("CREATE TABLE IF NOT EXISTS assignments (id text PRIMARY KEY UNIQUE, content text, course_id int, due_date timestamp, creator_id int, created_at timestamp)")
+	_, err = database.Exec("CREATE TABLE IF NOT EXISTS assignments (id text PRIMARY KEY UNIQUE, content text, course_id int, due_date timestamp, creator_id text, created_at timestamp, from_moodle bool)")
+	if err != nil {
+		return err
+	}
+
+	_, err = database.Exec("CREATE TABLE IF NOT EXISTS sessions (uid text PRIMARY KEY UNIQUE, user_id text, created_at timestamp)")
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func DropTables() error {
+	_, err := database.Exec("DROP TABLE users, sessions, assignments;")
+	return err
 }

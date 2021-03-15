@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:latest
 
 ADD . /go/src/github.com/3nt3/homework
 
