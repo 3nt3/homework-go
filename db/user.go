@@ -82,6 +82,9 @@ func GetUserById(id string) (structs.User, error) {
 func Authenticate(username string, password string) (structs.User, bool, error) {
 	// get user by username
 	user, err := GetUserByUsername(username)
+	if err != nil {
+		return user, false, err
+	}
 
 	// check password
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))

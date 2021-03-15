@@ -7,7 +7,6 @@ import (
 	"os"
 )
 
-
 var (
 	WarningLogger *log.Logger
 	InfoLogger    *log.Logger
@@ -23,6 +22,6 @@ func InitLoggers() {
 
 	mw := io.MultiWriter(file, os.Stdout)
 	WarningLogger = log.New(mw, color.Yellow+"[WARNING] "+color.Reset, log.Ldate|log.Ltime|log.Lshortfile)
-	InfoLogger = log.New(mw, "[INFO] ", log.Ldate|log.Ltime|log.Lshortfile)
+	InfoLogger = log.New(mw, color.Cyan+"[INFO] "+color.Reset, log.Ldate|log.Ltime|log.Lshortfile)
 	ErrorLogger = log.New(mw, color.Red+"[ERROR] "+color.Reset, log.Ldate|log.Ltime|log.Lshortfile)
 }

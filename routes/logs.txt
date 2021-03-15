@@ -104,3 +104,99 @@
 [INFO] 2021/03/13 04:10:06 db.go:53: tables created successfully
 [INFO] 2021/03/13 04:10:06 assignment_test.go:54: user: map[created:2021-03-13T04:10:06.586232791+01:00 email:test@example.com id:1pgW2ZPwzeULCiMD8omFBZTxKkZ permission:0 username:test]
 [INFO] 2021/03/13 04:10:06 assignment_test.go:81: assignment
+[INFO] 2021/03/15 02:17:26 db.go:21: connecting to database...
+[INFO] 2021/03/15 02:17:26 db.go:41: connection to database successful
+[INFO] 2021/03/15 02:17:26 db.go:44: dropping tables /bc testing
+[INFO] 2021/03/15 02:17:26 db.go:48: creating tables...
+[INFO] 2021/03/15 02:17:26 db.go:53: tables created successfully
+[INFO] 2021/03/15 02:17:26 assignment_test.go:54: user: map[created:2021-03-15T02:17:26.468578682+01:00 email:test@example.com id:1plwaGXRSSm5OeYC0NJk5Aih353 permission:0 username:test]
+[INFO] 2021/03/15 02:17:26 assignment_test.go:81: assignment
+[INFO] 2021/03/15 02:17:26 db.go:21: connecting to database...
+[INFO] 2021/03/15 02:17:26 db.go:41: connection to database successful
+[INFO] 2021/03/15 02:17:26 db.go:44: dropping tables /bc testing
+[INFO] 2021/03/15 02:17:26 db.go:48: creating tables...
+[INFO] 2021/03/15 02:17:26 db.go:53: tables created successfully
+[INFO] 2021/03/15 02:17:26 user_test.go:56: user: map[created:2021-03-15T02:17:26.57440421+01:00 email:test@example.com id:1plwaJax8vMMeShXGzrOybjV7IB permission:0 username:test]
+[36m[INFO] [0m2021/03/15 02:25:23 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:25:23 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:25:23 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:25:23 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:25:23 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:25:23 assignment_test.go:54: user: map[created:2021-03-15T02:25:23.959105772+01:00 email:test@example.com id:1plxYD6Qy4UXyOXwFHwDrqqkO0c permission:0 username:test]
+[31m[ERROR] [0m2021/03/15 02:25:23 assignment.go:16: error getting user by session: http: named cookie not present
+[36m[INFO] [0m2021/03/15 02:25:23 assignment_test.go:85: assignment
+[36m[INFO] [0m2021/03/15 02:26:24 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:26:24 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:26:24 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:26:24 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:26:24 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:26:24 assignment_test.go:54: user: map[created:2021-03-15T02:26:24.331620817+01:00 email:test@example.com id:1plxfrtw5WlIprKaZyYxDsYDBbm permission:0 username:test]
+[31m[ERROR] [0m2021/03/15 02:26:24 assignment.go:16: error getting user by session: http: named cookie not present
+[36m[INFO] [0m2021/03/15 02:26:24 assignment_test.go:85: assignment
+[36m[INFO] [0m2021/03/15 02:26:35 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:26:35 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:26:35 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:26:35 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:26:36 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:26:36 assignment_test.go:54: user: map[created:2021-03-15T02:26:36.064868747+01:00 email:test@example.com id:1plxhQZOcAEvhFkHafZqbHvB8Hz permission:0 username:test]
+[31m[ERROR] [0m2021/03/15 02:26:36 assignment.go:16: error getting user by session: http: named cookie not present
+[36m[INFO] [0m2021/03/15 02:26:36 assignment_test.go:85: assignment
+[36m[INFO] [0m2021/03/15 02:29:02 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:29:02 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:29:02 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:29:02 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:29:02 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:29:02 assignment_test.go:55: user: map[created:2021-03-15T02:29:02.607946377+01:00 email:test@example.com id:1plxzjVAA44yXxfn8Vs5kZ6Aoog permission:0 username:test], session: hw_cookie_v2=1plxzpMYkIhlBGqyNrgUfjjhF82; Path=/; Max-Age=7776000
+[36m[INFO] [0m2021/03/15 02:29:02 assignment_test.go:86: assignment
+[36m[INFO] [0m2021/03/15 02:33:19 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:33:19 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:33:19 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:33:19 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:33:19 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:33:19 assignment_test.go:55: user: map[created:2021-03-15T02:33:19.333018231+01:00 email:test@example.com id:1plyW4e1k37FjnxJQ7ACOppQCQa permission:0 username:test], session: hw_cookie_v2=1plyW7HmhSwK3y3QoCpV7awZDem; Path=/; Max-Age=7776000
+[36m[INFO] [0m2021/03/15 02:33:19 assignment_test.go:86: assignment
+[31m[ERROR] [0m2021/03/15 02:33:19 session.go:15: error deleting old sessions: pq: relation "sessions" does not exist
+[36m[INFO] [0m2021/03/15 02:33:47 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:33:47 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:33:47 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:33:47 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:33:47 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:33:47 assignment_test.go:55: user: map[created:2021-03-15T02:33:47.935779668+01:00 email:test@example.com id:1plyZcqJaygv44xy1wZMRG2tLJs permission:0 username:test], session: hw_cookie_v2=1plyZZSl5CIHLlcxx1UeiUUr7DA; Path=/; Max-Age=7776000
+[36m[INFO] [0m2021/03/15 02:33:47 assignment_test.go:86: assignment
+[36m[INFO] [0m2021/03/15 02:55:01 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:55:01 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:55:01 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:55:01 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:55:01 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:55:13 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:55:13 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:55:13 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:55:13 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:55:13 db.go:53: tables created successfully
+[31m[ERROR] [0m2021/03/15 02:55:13 assignment.go:16: error getting user by session: sql: no rows in result set
+[36m[INFO] [0m2021/03/15 02:55:13 assignment_test.go:45: assignment
+[31m[ERROR] [0m2021/03/15 02:55:13 user.go:44: error creating new user: pq: duplicate key value violates unique constraint "users_username_key"
+[36m[INFO] [0m2021/03/15 02:55:13 user_test.go:43: user: <nil>
+[36m[INFO] [0m2021/03/15 02:55:57 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:55:57 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:55:57 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:55:57 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:55:57 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:55:57 assignment_test.go:45: assignment
+[31m[ERROR] [0m2021/03/15 02:55:57 user.go:44: error creating new user: pq: duplicate key value violates unique constraint "users_username_key"
+[36m[INFO] [0m2021/03/15 02:55:57 user_test.go:43: user: <nil>
+[36m[INFO] [0m2021/03/15 02:56:11 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:56:11 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:56:11 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:56:11 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:56:11 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:56:11 assignment_test.go:45: assignment
+[31m[ERROR] [0m2021/03/15 02:56:11 user.go:44: error creating new user: pq: duplicate key value violates unique constraint "users_email_key"
+[36m[INFO] [0m2021/03/15 02:56:11 user_test.go:43: user: <nil>
+[36m[INFO] [0m2021/03/15 02:56:20 db.go:21: connecting to database...
+[36m[INFO] [0m2021/03/15 02:56:20 db.go:41: connection to database successful
+[36m[INFO] [0m2021/03/15 02:56:20 db.go:44: dropping tables /bc testing
+[36m[INFO] [0m2021/03/15 02:56:21 db.go:48: creating tables...
+[36m[INFO] [0m2021/03/15 02:56:21 db.go:53: tables created successfully
+[36m[INFO] [0m2021/03/15 02:56:21 assignment_test.go:45: assignment
+[36m[INFO] [0m2021/03/15 02:56:21 user_test.go:43: user: map[created:2021-03-15T02:56:21.250760843+01:00 email:test1@example.com id:1pm1JnVqiR871u0PGrDQ1e1RXQo permission:0 username:test1]

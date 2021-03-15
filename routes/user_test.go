@@ -3,30 +3,17 @@ package routes
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/3nt3/homework/db"
 	"github.com/3nt3/homework/logging"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func initializeStuff() {
-	logging.InitLoggers()
-}
 
 func TestCreateUser(t *testing.T) {
-	initializeStuff()
-
-	// initialize database
-	err := db.InitDatabase(true)
-	if err != nil {
-		t.Errorf("error initializing database")
-	}
-
-
 	body, _ := json.Marshal(map[string]string{
-		"username": "test",
-		"email": "test@example.com",
+		"username": "test1",
+		"email": "test1@example.com",
 		"password": "test123",
 	})
 
@@ -54,7 +41,5 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	logging.InfoLogger.Printf("user: %+v\n", resp.Content)
-
-	_ = db.DropTables()
 }
 
