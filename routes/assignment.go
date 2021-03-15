@@ -59,8 +59,8 @@ func CreateAssignment(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
-	keyValue, ok := r.URL.Query()["id"]
-	if !ok {
+	id := r.URL.Query().Get("id")
+	if id == "" {
 		_ = returnApiResponse(w, apiResponse{
 			Content: nil,
 			Errors: []string{"bad request"},
@@ -87,7 +87,7 @@ func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assignment, err := db.GetAssignmentByID(keyValue[1])
+	assignment, err := db.GetAssignmentByID(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			_ = returnApiResponse(w, apiResponse{
