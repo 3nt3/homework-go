@@ -68,6 +68,7 @@ type Course struct {
 type CachedCourse struct {
 	ID ksuid.KSUID `json:"id"`
 	Course
-	MoodleURL string    `json:"moodle_url"`
-	CachedAt  time.Time `json:"cached_at"`
+	MoodleURL string      `json:"moodle_url"`
+	UserID    ksuid.KSUID `json:"user_id"`
+	CachedAt  time.Time   `json:"cached_at"`
 }
