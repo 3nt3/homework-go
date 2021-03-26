@@ -72,10 +72,15 @@ func initializeTables() error {
 		return err
 	}
 
+	_, err = database.Exec("CREATE TABLE IF NOT EXISTS moodle_cache (id text PRIMARY KEY UNIQUE, course_json text, moodle_url text, cached_at timestamp, user_id text);")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func DropTables() error {
-	_, err := database.Exec("DROP TABLE users, sessions, assignments;")
+	_, err := database.Exec("DROP TABLE users, sessions, assignments, moodle_cache;")
 	return err
 }

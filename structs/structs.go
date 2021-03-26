@@ -15,6 +15,9 @@ type User struct {
 	PasswordHash string
 	Created      time.Time `json:"created"`
 	Permission   int8      `json:"permission"`
+	Courses      []Course  `json:"courses"`
+	MoodleURL    string    `json:"moodle_url"`
+	MoodleToken  string    `json:"moodle_token"`
 }
 
 type CleanUser struct {
@@ -23,6 +26,8 @@ type CleanUser struct {
 	Email      string      `json:"email"`
 	Created    time.Time   `json:"created"`
 	Permission int8        `json:"permission"`
+	Courses    []Course    `json:"courses"`
+	MoodleURL  string      `json:"moodle_url"`
 }
 
 func (u User) GetClean() CleanUser {
@@ -49,4 +54,20 @@ type Assignment struct {
 	DueDate    time.Time   `json:"due_date"`
 	Course     int         `json:"course"`
 	FromMoodle bool        `json:"from_moodle"`
+}
+
+type Course struct {
+	ID          interface{}  `json:"id"`
+	Name        string       `json:"name"`
+	Teacher     string       `json:"teacher"`
+	FromMoodle  bool         `json:"from_moodle"`
+	Assignments []Assignment `json:"asssignments"`
+	User        int          `json:"user"`
+}
+
+type CachedCourse struct {
+	ID ksuid.KSUID `json:"id"`
+	Course
+	MoodleURL string    `json:"moodle_url"`
+	CachedAt  time.Time `json:"cached_at"`
 }
