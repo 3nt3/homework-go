@@ -18,16 +18,18 @@ type User struct {
 	Courses      []Course  `json:"courses"`
 	MoodleURL    string    `json:"moodle_url"`
 	MoodleToken  string    `json:"moodle_token"`
+	MoodleUserID int       `json:"moodle_user_id"`
 }
 
 type CleanUser struct {
-	ID         ksuid.KSUID `json:"id"`
-	Username   string      `json:"username"`
-	Email      string      `json:"email"`
-	Created    time.Time   `json:"created"`
-	Permission int8        `json:"permission"`
-	Courses    []Course    `json:"courses"`
-	MoodleURL  string      `json:"moodle_url"`
+	ID           ksuid.KSUID `json:"id"`
+	Username     string      `json:"username"`
+	Email        string      `json:"email"`
+	Created      time.Time   `json:"created"`
+	Permission   int8        `json:"permission"`
+	Courses      []Course    `json:"courses"`
+	MoodleURL    string      `json:"moodle_url"`
+	MoodleUserID int         `json:"moodle_user_id"`
 }
 
 func (u User) GetClean() CleanUser {
@@ -62,7 +64,7 @@ type Course struct {
 	Teacher     string       `json:"teacher"`
 	FromMoodle  bool         `json:"from_moodle"`
 	Assignments []Assignment `json:"asssignments"`
-	User        int          `json:"user"`
+	User        ksuid.KSUID  `json:"user"`
 }
 
 type CachedCourse struct {

@@ -16,6 +16,11 @@
 - [ ] `GET` `/courses/search/{searchterm}` 
 - [ ] `GET` `/courses/active` gets all courses with active assignments (only active assignments to save bandwidth)
 
+## moodle
+- [ ] `GET` `/moodle/get-courses`
+- [ ] `POST` `/moodle/authenticate`
+- [ ] `POST` `/moodle/get-school-info`
+
 ### not used currently
 
 These endpoints would be used if non-moodle courses were currently supported in [the frontend](https://github.com/entenclub/homework/tree/master/frontend) currently hosted at [https://hausis.3nt3.de](https://hausis.3nt3.de)

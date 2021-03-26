@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/3nt3/homework/logging"
 	_ "github.com/lib/pq"
+	"os"
 )
 
 const (
@@ -22,7 +23,13 @@ func InitDatabase(testing bool) error {
 
 	var psqlconn string
 	if !testing {
-		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+		_, err := os.Stat("/.dockerenv")
+		logging.InfoLogger.Printf("err: %v", err)
+		if os.IsNotExist(err) {
+			psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", "localhost", port, user, password, dbname)
+		} else {
+			psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+		}
 	} else {
 		psqlconn = "host=localhost port=5432 user=homework_testing password=testing dbname=homework_testing sslmode=disable"
 	}
@@ -55,9 +62,8 @@ func InitDatabase(testing bool) error {
 	return nil
 }
 
-
 func initializeTables() error {
-	_, err := database.Exec("CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY UNIQUE, username text UNIQUE, email text UNIQUE, password_hash text, created_at timestamp, permission int)")
+	_, err := database.Exec("CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY UNIQUE, username text UNIQUE, email text UNIQUE, password_hash text, created_at timestamp, permission int, courses_json text, moodle_url text, moodle_token text, moodle_user_id int)")
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+	"encoding/json"
 	"github.com/3nt3/homework/structs"
 	"github.com/segmentio/ksuid"
 	"golang.org/x/crypto/bcrypt"
@@ -16,7 +18,7 @@ func NewUser(username string, email string, password string) (structs.User, erro
 	}
 
 	now := time.Now()
-	_, err = database.Exec("insert into users (id, username, email, password_hash, permission, created_at) values ($1, $2, $3, $4, 0, $5);", id.String(), username, email, hash, now)
+	_, err = database.Exec("insert into users (id, username, email, password_hash, permission, created_at, courses_json, moodle_url, moodle_user_id, moodle_token) VALUES ($1, $2, $3, $4, 0, $5, '[]', '', -1, '');", id.String(), username, email, hash, now)
 	if err != nil {
 		return structs.User{}, err
 	}
@@ -37,13 +39,7 @@ func GetUserByUsername(username string) (structs.User, error) {
 		return structs.User{}, row.Err()
 	}
 
-	var user structs.User
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
-	if err != nil {
-		return structs.User{}, err
-	}
-
-	return user, nil
+	return scanUserRow(row)
 }
 
 /*
@@ -65,24 +61,21 @@ func GetUserByEmail(email string ) (structs.User, error) {
 */
 
 func GetUserById(id string) (structs.User, error) {
-	row := database.QueryRow("select * from users where id = $1;", id)
+	row := database.QueryRow("SELECT * FROM users WHERE id = $1", id)
 	if row.Err() != nil {
 		return structs.User{}, row.Err()
 	}
 
-	var user structs.User
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
-	if err != nil {
-		return structs.User{}, err
-	}
-
-	return user, nil
+	return scanUserRow(row)
 }
 
 func Authenticate(username string, password string) (structs.User, bool, error) {
 	// get user by username
 	user, err := GetUserByUsername(username)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return user, false, nil
+		}
 		return user, false, err
 	}
 
@@ -99,7 +92,7 @@ func Authenticate(username string, password string) (structs.User, bool, error) 
 	}
 
 	// if no error, return authenticated
-	return structs.User{}, true, nil
+	return user, true, nil
 }
 
 func GetUserBySession(sessionId string) (structs.User, bool, error) {
@@ -129,4 +122,40 @@ func GetUserBySession(sessionId string) (structs.User, bool, error) {
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
+}
+
+func UpdateMoodleData(user structs.User, moodleURL string, token string, moodleUserID int) (structs.User, error) {
+	_, err := database.Exec("UPDATE users SET moodle_url = $1, moodle_token = $2, moodle_user_id = $3 WHERE id = $4",  moodleURL, token, moodleUserID, user.ID.String())
+
+	if err != nil {
+		return structs.User{}, err
+	}
+
+	// return user
+	return GetUserById(user.ID.String())
+}
+
+func scanUserRow(row *sql.Row) (structs.User, error) {
+	var courseIds []int
+	var coursesJson string
+	var user structs.User
+
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission, &coursesJson, &user.MoodleURL, &user.MoodleToken, &user.MoodleUserID)
+	if err != nil {
+		return structs.User{}, err
+	}
+
+	if err = json.Unmarshal([]byte(coursesJson), &courseIds); err != nil {
+		return structs.User{}, err
+	}
+
+	if user.MoodleToken != "" && user.MoodleURL != "" {
+		// get courses
+		user.Courses, err = GetMoodleUserCourses(user)
+		if err != nil {
+			return user, err
+		}
+	}
+
+	return user, nil
 }

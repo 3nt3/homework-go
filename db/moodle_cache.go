@@ -3,16 +3,18 @@ package db
 import (
 	"encoding/json"
 	"github.com/3nt3/homework/structs"
+	"github.com/segmentio/ksuid"
+	"time"
 )
 
 func GetUserCachedCourses(user structs.User) ([]structs.CachedCourse, error) {
 	var courses []structs.CachedCourse
 
 	// get all cached moodle courses where moodle_url == the users moodle url and the userID == user.id
-	query := "SELECT * FROM moodle_cache WHERE moodle_url == $1 AND user_id == $2"
+	query := "SELECT * FROM moodle_cache WHERE moodle_url = $1 AND user_id = $2"
 	rows, err := database.Query(query, user.MoodleURL, user.ID)
 	if err != nil {
-		return nil, err
+		return courses, nil
 	}
 
 	// iterate through rows
@@ -39,3 +41,31 @@ func GetUserCachedCourses(user structs.User) ([]structs.CachedCourse, error) {
 	// return
 	return courses, nil
 }
+
+func DeleteCachedCourses(courses []structs.CachedCourse) error {
+	ids := []ksuid.KSUID{}
+	for _, cc := range courses {
+		ids = append(ids, cc.ID)
+	}
+
+	statement := "DELETE FROM moodle_cache WHERE id IN $1"
+	_, err := database.Exec(statement, ids)
+
+	return err
+}
+
+func DeleteCachedCoursesPerUser(userID string) error {
+	_, err := database.Exec("DELETE FROM moodle_cache WHERE user_id = $1", userID)
+	return err
+}
+
+func CreateNewCacheObject(course structs.CachedCourse) error {
+	jsonCourse, err := json.Marshal(course.Course)
+	if err != nil {
+		return err
+	}
+
+	_, err = database.Exec("INSERT INTO moodle_cache (id, course_json, moodle_url, cached_at, user_id) VALUES ($1, $2, $3, $4, $5)", ksuid.New().String(), string(jsonCourse), course.MoodleURL, time.Now(), course.UserID)
+	return err
+}
+

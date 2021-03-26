@@ -31,3 +31,24 @@ func DeleteAssignment(id string) error {
 	_, err := database.Exec("DELETE FROM assignments WHERE id = $1", id)
 	return err
 }
+
+func GetAssignmentsByCourse(courseID int) ([]structs.Assignment, error) {
+	rows, err := database.Query("SELECT * FROM assignments WHERE course_id = $1", courseID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var assignments []structs.Assignment
+	for rows.Next() {
+		var a structs.Assignment
+		err := rows.Scan(&a.UID, &a.Title, &a.Course, &a.DueDate, &a.Creator, &a.Created, &a.FromMoodle)
+		if err != nil {
+			return nil, err
+		}
+
+		assignments = append(assignments, a)
+	}
+
+	return assignments, nil
+}
