@@ -77,7 +77,7 @@ func GetMoodleUserCourses(user structs.User) ([]structs.Course, error) {
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			return nil, errors.New(fmt.Sprintf("http request not ok. status %d", resp.StatusCode))
+			return nil, fmt.Errorf("http request not ok. status %d", resp.StatusCode)
 		}
 
 		var mCourses []moodleCourse
@@ -145,7 +145,7 @@ func updateCache(baseURL string, token string, userID ksuid.KSUID, moodleUserID 
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("http request not ok. status %d", resp.StatusCode))
+		return fmt.Errorf("http request not ok. status %d", resp.StatusCode)
 	}
 
 	var mCourses []moodleCourse
