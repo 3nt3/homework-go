@@ -82,6 +82,9 @@ func GetMoodleUserCourses(user structs.User) ([]structs.Course, error) {
 
 		var mCourses []moodleCourse
 		err = json.NewDecoder(resp.Body).Decode(&mCourses)
+		if err != nil {
+			return nil, err
+		}
 
 		for _, mCourse := range mCourses {
 			assignments, err := GetAssignmentsByCourse(mCourse.ID)
