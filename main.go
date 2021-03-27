@@ -26,7 +26,7 @@ func main() {
 	r.HandleFunc("/user/login", routes.Login).Methods("POST")
 	r.HandleFunc("/assignment", routes.CreateAssignment).Methods("POST")
 	r.HandleFunc("/assignment", routes.DeleteAssignment).Methods("DELETE")
-	r.HandleFunc("/course/active", routes.GetActiveCourses)
+	r.HandleFunc("/courses/active", routes.GetActiveCourses)
 	r.HandleFunc("/moodle/authenticate", routes.MoodleAuthenticate).Methods("POST")
 
 	logging.InfoLogger.Println("started server on port :8000")
