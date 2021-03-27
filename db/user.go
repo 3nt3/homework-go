@@ -125,7 +125,7 @@ func hashPassword(password string) (string, error) {
 }
 
 func UpdateMoodleData(user structs.User, moodleURL string, token string, moodleUserID int) (structs.User, error) {
-	_, err := database.Exec("UPDATE users SET moodle_url = $1, moodle_token = $2, moodle_user_id = $3 WHERE id = $4",  moodleURL, token, moodleUserID, user.ID.String())
+	_, err := database.Exec("UPDATE users SET moodle_url = $1, moodle_token = $2, moodle_user_id = $3 WHERE id = $4", moodleURL, token, moodleUserID, user.ID.String())
 
 	if err != nil {
 		return structs.User{}, err
@@ -158,4 +158,33 @@ func scanUserRow(row *sql.Row) (structs.User, error) {
 	}
 
 	return user, nil
+}
+
+// UsernameTaken returns true if there is a row with the username provided as an argument and false if there isn't
+func UsernameTaken(username string) (bool, error) {
+	row := database.QueryRow("select exists(select 1 from users where username = $1)", username)
+	if row.Err() != nil {
+		return false, row.Err()
+	}
+
+	var exists bool
+	if err := row.Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+// EmailTaken returns true if there is a row with the email provided as an argument and false if there isn't
+func EmailTaken(email string) (bool, error) {
+	row := database.QueryRow("select exists(select 1 from users where email = $1)", email)
+	if row.Err() != nil {
+		return false, row.Err()
+	}
+
+	var exists bool
+	if err := row.Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }

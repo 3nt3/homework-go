@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"database/sql"
 	"encoding/json"
 	"github.com/3nt3/homework/db"
 	"github.com/3nt3/homework/logging"
@@ -96,7 +97,11 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	user, err := db.GetUserById(id)
 	if err != nil {
 		logging.ErrorLogger.Printf("error fetching user from db: %v\n", err)
-		_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"internal server error"}}, 500)
+		if err != sql.ErrNoRows {
+			_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"internal server error"}}, 500)
+		} else {
+			_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"user does not exist"}}, 404)
+		}
 		return
 	}
 
@@ -132,7 +137,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user, authenticated, err := db.Authenticate(username, password)
 	if err != nil {
 		logging.ErrorLogger.Printf("error authenticating: %v\n", err)
-		_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"internal server error"}}, 500)
 		return
 	}
 
@@ -182,4 +186,46 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = returnApiResponse(w, apiResponse{Content: user.GetClean(), Errors: []string{}}, 200)
+}
+
+func UsernameTaken(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
+	username, ok := mux.Vars(r)["username"]
+	if !ok {
+		_ = returnApiResponse(w, apiResponse{
+			Errors:  []string{"no username provided"},
+		}, 400)
+		return
+	}
+
+	taken, err := db.UsernameTaken(username)
+	if err != nil {
+		_ = returnApiResponse(w, apiResponse{
+			Errors:  []string{"internal server error"},
+		}, 500)
+	}
+
+	_ = returnApiResponse(w, apiResponse{Content: taken, Errors: []string{}}, 200)
+}
+
+func EmailTaken(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
+	email, ok := mux.Vars(r)["email"]
+	if !ok {
+		_ = returnApiResponse(w, apiResponse{
+			Errors: []string{"no username provided"},
+		}, 400)
+		return
+	}
+
+	taken, err := db.EmailTaken(email)
+	if err != nil {
+		_ = returnApiResponse(w, apiResponse{
+			Errors: []string{"internal server error"},
+		}, 500)
+	}
+
+	_ = returnApiResponse(w, apiResponse{Content: taken, Errors: []string{}}, 200)
 }
