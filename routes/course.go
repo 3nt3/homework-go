@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/3nt3/homework/db"
 	"github.com/3nt3/homework/logging"
+	"github.com/3nt3/homework/structs"
 	"net/http"
 )
 
@@ -31,8 +32,13 @@ func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 		logging.ErrorLogger.Printf("error: %v\n", err)
 	}
 
+	var cleanCourses []structs.CleanCourse
+	for _, c := range courses {
+		cleanCourses = append(cleanCourses, c.GetClean())
+	}
+
 	_ = returnApiResponse(w, apiResponse{
-		Content: courses,
+		Content: cleanCourses,
 		Errors:  []string{},
 	}, 200)
 }
