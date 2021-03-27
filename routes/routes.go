@@ -37,5 +37,5 @@ func getUserBySession(r *http.Request) (structs.User, bool, error) {
 func HandleCORSPreflight(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 	w.Header().Add("Access-Control-Allow-Credentials", "true")
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, x-requested-with")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, x-requested-with, Origin")
 }
