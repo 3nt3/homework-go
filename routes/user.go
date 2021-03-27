@@ -10,6 +10,8 @@ import (
 )
 
 func NewUser(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	var userData map[string]string
 	err := json.NewDecoder(r.Body).Decode(&userData)
 	if err != nil {
@@ -66,6 +68,8 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserById(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	id, ok := mux.Vars(r)["id"]
 	if !ok {
 		logging.WarningLogger.Printf("no id specified\n")
@@ -84,6 +88,8 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	var userData map[string]string
 
 	err := json.NewDecoder(r.Body).Decode(&userData)
@@ -139,6 +145,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	user, authenticated, err := getUserBySession(r)
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)

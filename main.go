@@ -19,7 +19,8 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/user", routes.NewUser).Methods("POST")
+	r.Methods("OPTIONS").HandlerFunc(routes.HandleCORSPreflight)
+	r.HandleFunc("/user/register", routes.NewUser).Methods("POST")
 	r.HandleFunc("/user", routes.GetUser).Methods("GET")
 	r.HandleFunc("/user/{id}", routes.GetUserById).Methods("GET")
 	r.HandleFunc("/user/login", routes.Login).Methods("POST")
@@ -31,3 +32,4 @@ func main() {
 	logging.InfoLogger.Println("started server on port :8000")
 	logging.ErrorLogger.Fatalln(http.ListenAndServe(":8000", r).Error())
 }
+

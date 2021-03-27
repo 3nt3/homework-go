@@ -19,6 +19,7 @@ func returnApiResponse(w http.ResponseWriter, response apiResponse, status int) 
 	response.Version = "2.0"
 	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(response)
+
 	return err
 }
 
@@ -31,4 +32,10 @@ func getUserBySession(r *http.Request) (structs.User, bool, error) {
 	sessionId := cookie.Value
 
 	return db.GetUserBySession(sessionId)
+}
+
+func HandleCORSPreflight(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Add("Access-Control-Allow-Credentials", "true")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, x-requested-with")
 }

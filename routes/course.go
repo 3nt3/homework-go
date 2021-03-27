@@ -9,6 +9,8 @@ import (
 
 // TODO: return all courses with assignments whose due dates lie in the future
 func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	user, authenticated, err := getUserBySession(r)
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
@@ -45,5 +47,6 @@ func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 
 // TODO
 func GetAllCourses(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
 
 }

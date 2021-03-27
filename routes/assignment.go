@@ -10,6 +10,7 @@ import (
 )
 
 func CreateAssignment(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
 	user, authenticated, err := getUserBySession(r)
 
 	if err != nil {
@@ -59,6 +60,8 @@ func CreateAssignment(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		_ = returnApiResponse(w, apiResponse{
