@@ -1,4 +1,13 @@
 # routes
+
+## todo
+- [ ] `GET` `/user/{id}` gets user from `{id}`
+- [ ] `POST` `/user/logout` deletes session
+- [ ] `GET` `/username-taken/{username}` is `{username}` taken?
+- [ ] `GET` `/courses/search/{searchterm}`
+- [ ] `GET` `/moodle/get-courses` I don't really think this is used?
+- [ ] `POST` `/moodle/get-school-info`
+
 ## user
 - [x] `GET` `/user` gets user from session cookie
 - [ ] `GET` `/user/{id}` gets user from `{id}`
@@ -14,11 +23,11 @@
 
 ## course
 - [ ] `GET` `/courses/search/{searchterm}` 
-- [ ] `GET` `/courses/active` gets all courses with active assignments (only active assignments to save bandwidth)
+- [x] `GET` `/courses/active` gets all courses with active assignments (only active assignments to save bandwidth)
 
 ## moodle
 - [ ] `GET` `/moodle/get-courses`
-- [ ] `POST` `/moodle/authenticate`
+- [x] `POST` `/moodle/authenticate`
 - [ ] `POST` `/moodle/get-school-info`
 
 ### not used currently
