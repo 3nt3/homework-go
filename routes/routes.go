@@ -9,10 +9,14 @@ import (
 
 type apiResponse struct {
 	Content interface{} `json:"content"`
-	Errors []string `json:"errors"`
+	Errors  []string    `json:"errors"`
+
+	// this should probably not be changed except in returnApiResponse()
+	Version string `json:"version"`
 }
 
 func returnApiResponse(w http.ResponseWriter, response apiResponse, status int) error {
+	response.Version = "2.0"
 	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(response)
 	return err
