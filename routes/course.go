@@ -31,6 +31,15 @@ func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 
 	courses, err := db.GetMoodleUserCourses(user)
 	if err != nil {
+		if err.Error() == "no token or moodle url was provided" {
+			logging.InfoLogger.Printf("no moodle access configured for user %s\n", user.ID.String())
+
+			_ = returnApiResponse(w, apiResponse{
+				Content: []string{},
+				Errors: []string{},
+			}, 200)
+			return
+		}
 		logging.ErrorLogger.Printf("error: %v\n", err)
 	}
 

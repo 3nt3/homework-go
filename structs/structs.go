@@ -14,7 +14,7 @@ type User struct {
 	Email        string      `json:"email"`
 	PasswordHash string
 	Created      time.Time `json:"created"`
-	Permission   int8      `json:"permission"`
+	Privilege    int8      `json:"privilege"`
 	Courses      []Course  `json:"courses"`
 	MoodleURL    string    `json:"moodle_url"`
 	MoodleToken  string    `json:"moodle_token"`
@@ -26,7 +26,7 @@ type CleanUser struct {
 	Username     string      `json:"username"`
 	Email        string      `json:"email"`
 	Created      time.Time   `json:"created"`
-	Permission   int8        `json:"permission"`
+	Privilege    int8        `json:"privilege"`
 	Courses      []Course    `json:"courses"`
 	MoodleURL    string      `json:"moodle_url"`
 	MoodleUserID int         `json:"moodle_user_id"`
@@ -38,7 +38,7 @@ func (u User) GetClean() CleanUser {
 		Username:     u.Username,
 		Email:        u.Email,
 		Created:      u.Created,
-		Permission:   u.Permission,
+		Privilege:    u.Privilege,
 		Courses:      u.Courses,
 		MoodleURL:    u.MoodleURL,
 		MoodleUserID: u.MoodleUserID,
@@ -47,7 +47,7 @@ func (u User) GetClean() CleanUser {
 
 func (a Assignment) GetClean() CleanAssignment {
 	return CleanAssignment{
-		UID:       	a.UID,
+		UID:        a.UID,
 		Creator:    a.Creator.GetClean(),
 		Created:    a.Created,
 		Title:      a.Title,
@@ -75,7 +75,7 @@ type Assignment struct {
 
 type CleanAssignment struct {
 	UID        ksuid.KSUID `json:"uid"`
-	Creator    CleanUser        `json:"creator"`
+	Creator    CleanUser   `json:"creator"`
 	Created    time.Time   `json:"created"`
 	Title      string      `json:"title"`
 	DueDate    time.Time   `json:"due_date"`
@@ -93,21 +93,21 @@ type Course struct {
 }
 
 type CleanCourse struct {
-	ID          interface{}  `json:"id"`
-	Name        string       `json:"name"`
-	Teacher     string       `json:"teacher"`
-	FromMoodle  bool         `json:"from_moodle"`
+	ID          interface{}       `json:"id"`
+	Name        string            `json:"name"`
+	Teacher     string            `json:"teacher"`
+	FromMoodle  bool              `json:"from_moodle"`
 	Assignments []CleanAssignment `json:"asssignments"`
-	User        ksuid.KSUID  `json:"user"`
+	User        ksuid.KSUID       `json:"user"`
 }
 
 func (c Course) GetClean() CleanCourse {
 	cc := CleanCourse{
-		ID:          c.ID,
-		Name:        c.Name,
-		Teacher:     c.Teacher,
-		FromMoodle:  c.FromMoodle,
-		User:        c.User,
+		ID:         c.ID,
+		Name:       c.Name,
+		Teacher:    c.Teacher,
+		FromMoodle: c.FromMoodle,
+		User:       c.User,
 	}
 	for i := 0; i < len(c.Assignments); i++ {
 		cc.Assignments = append(cc.Assignments, c.Assignments[i].GetClean())

@@ -9,6 +9,8 @@ import (
 )
 
 func MoodleAuthenticate(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
 	user, authenticated, err := getUserBySession(r)
 	if err != nil {
 		logging.WarningLogger.Printf("error getting user by session: %v\n", err)

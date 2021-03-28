@@ -29,7 +29,7 @@ func NewUser(username string, email string, password string) (structs.User, erro
 		Email:        email,
 		PasswordHash: hash,
 		Created:      now,
-		Permission:   0,
+		Privilege:    0,
 	}, nil
 }
 
@@ -50,7 +50,7 @@ func GetUserByEmail(email string ) (structs.User, error) {
 	}
 
 	var user structs.User
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Privilege)
 	if err != nil {
 		return structs.User{}, err
 	}
@@ -140,7 +140,7 @@ func scanUserRow(row *sql.Row) (structs.User, error) {
 	var coursesJson string
 	var user structs.User
 
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Permission, &coursesJson, &user.MoodleURL, &user.MoodleToken, &user.MoodleUserID)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.Created, &user.Privilege, &coursesJson, &user.MoodleURL, &user.MoodleToken, &user.MoodleUserID)
 	if err != nil {
 		return structs.User{}, err
 	}

@@ -45,23 +45,19 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := db.NewUser(username, email, password)
 	if err != nil {
-		logging.ErrorLogger.Printf("error creating new user: %v\n", err)
-		var errors []string
 		var responseCode int
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 			if strings.Contains(err.Error(), "email") {
-				errors = append(errors, "email already in use")
-				responseCode = 400
+				_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"email already in use"}}, http.StatusBadRequest)
+				return
 			}
 			if strings.Contains(err.Error(), "username") {
-				errors = append(errors, "username already in use")
-				responseCode = 400
-			} else {
-				errors = []string{"internal server error"}
-				responseCode = 500
+				_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"username already in use"}}, http.StatusBadRequest)
+				return
 			}
 		}
-		_ = returnApiResponse(w, apiResponse{Content: nil, Errors: errors}, responseCode)
+		logging.ErrorLogger.Printf("error creating new user: %v\n", err)
+		_ = returnApiResponse(w, apiResponse{Content: nil, Errors: []string{"internal server error"}}, responseCode)
 		return
 	}
 
