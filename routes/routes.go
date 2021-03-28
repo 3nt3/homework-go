@@ -14,6 +14,11 @@ type apiResponse struct {
 
 func returnApiResponse(w http.ResponseWriter, response apiResponse, status int) error {
 	w.WriteHeader(status)
+
+	if response.Errors == nil {
+		response.Errors = []string{}
+	}
+
 	err := json.NewEncoder(w).Encode(response)
 
 	return err

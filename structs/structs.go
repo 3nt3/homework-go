@@ -48,7 +48,7 @@ func (u User) GetClean() CleanUser {
 func (a Assignment) GetClean() CleanAssignment {
 	return CleanAssignment{
 		UID:        a.UID,
-		Creator:    a.Creator.GetClean(),
+		User:       a.User.GetClean(),
 		Created:    a.Created,
 		Title:      a.Title,
 		DueDate:    a.DueDate,
@@ -65,7 +65,7 @@ type Session struct {
 
 type Assignment struct {
 	UID        ksuid.KSUID `json:"uid"`
-	Creator    User        `json:"creator"`
+	User       User        `json:"creator"`
 	Created    time.Time   `json:"created"`
 	Title      string      `json:"title"`
 	DueDate    time.Time   `json:"due_date"`
@@ -75,7 +75,7 @@ type Assignment struct {
 
 type CleanAssignment struct {
 	UID        ksuid.KSUID `json:"uid"`
-	Creator    CleanUser   `json:"creator"`
+	User       CleanUser   `json:"creator"`
 	Created    time.Time   `json:"created"`
 	Title      string      `json:"title"`
 	DueDate    time.Time   `json:"due_date"`
@@ -88,7 +88,7 @@ type Course struct {
 	Name        string       `json:"name"`
 	Teacher     string       `json:"teacher"`
 	FromMoodle  bool         `json:"from_moodle"`
-	Assignments []Assignment `json:"asssignments"`
+	Assignments []Assignment `json:"assignments"`
 	User        ksuid.KSUID  `json:"user"`
 }
 
@@ -97,7 +97,7 @@ type CleanCourse struct {
 	Name        string            `json:"name"`
 	Teacher     string            `json:"teacher"`
 	FromMoodle  bool              `json:"from_moodle"`
-	Assignments []CleanAssignment `json:"asssignments"`
+	Assignments []CleanAssignment `json:"assignments"`
 	User        ksuid.KSUID       `json:"user"`
 }
 
@@ -109,6 +109,7 @@ func (c Course) GetClean() CleanCourse {
 		FromMoodle: c.FromMoodle,
 		User:       c.User,
 	}
+	cc.Assignments = make([]CleanAssignment, 0)
 	for i := 0; i < len(c.Assignments); i++ {
 		cc.Assignments = append(cc.Assignments, c.Assignments[i].GetClean())
 	}

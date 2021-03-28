@@ -41,7 +41,7 @@ func CreateAssignment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assignment.Creator = user
+	assignment.User = user
 
 	assignment, err = db.CreateAssignment(assignment)
 	if err != nil {
@@ -107,7 +107,7 @@ func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if assignment.Creator.ID != user.ID {
+	if assignment.User.ID != user.ID {
 		_ = returnApiResponse(w, apiResponse{
 			Content: nil,
 			Errors:  []string{"you are not the creator of this assignment"},

@@ -90,3 +90,7 @@ func DropTables() error {
 	_, err := database.Exec("DROP TABLE users, sessions, assignments, moodle_cache;")
 	return err
 }
+
+func CloseConnection() {
+	_ = database.Close()
+}

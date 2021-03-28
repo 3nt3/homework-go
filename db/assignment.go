@@ -7,7 +7,7 @@ import (
 
 func CreateAssignment(assignment structs.Assignment) (structs.Assignment, error) {
 	id := ksuid.New()
-	_, err := database.Exec("INSERT INTO assignments (id, content, course_id, due_date, creator_id, created_at, from_moodle) VALUES ($1, $2, $3, $4, $5, $6, $7)", id.String(), assignment.Title, assignment.Course, assignment.DueDate, assignment.Creator.ID, assignment.Created, assignment.FromMoodle)
+	_, err := database.Exec("INSERT INTO assignments (id, content, course_id, due_date, creator_id, created_at, from_moodle) VALUES ($1, $2, $3, $4, $5, $6, $7)", id.String(), assignment.Title, assignment.Course, assignment.DueDate, assignment.User.ID, assignment.Created, assignment.FromMoodle)
 
 	newAssignment := assignment
 	newAssignment.UID = id
@@ -30,7 +30,7 @@ func GetAssignmentByID(id string) (structs.Assignment, error) {
 	}
 
 	creator, err := GetUserById(creatorID)
-	a.Creator = creator
+	a.User = creator
 
 	return a, err
 }
@@ -58,7 +58,7 @@ func GetAssignmentsByCourse(courseID int) ([]structs.Assignment, error) {
 		}
 
 		creator, err := GetUserById(creatorID)
-		a.Creator = creator
+		a.User = creator
 		if err != nil {
 			return nil, err
 		}

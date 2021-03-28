@@ -1,9 +1,11 @@
 package routes
 
 import (
+	"database/sql"
 	"github.com/3nt3/homework/db"
 	"github.com/3nt3/homework/logging"
 	"github.com/3nt3/homework/structs"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -36,14 +38,14 @@ func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 
 			_ = returnApiResponse(w, apiResponse{
 				Content: []string{},
-				Errors: []string{},
+				Errors:  []string{},
 			}, 200)
 			return
 		}
 		logging.ErrorLogger.Printf("error: %v\n", err)
 	}
 
-	var cleanCourses []structs.CleanCourse
+	var cleanCourses = make([]structs.CleanCourse, 0)
 	for _, c := range courses {
 		cleanCourses = append(cleanCourses, c.GetClean())
 	}

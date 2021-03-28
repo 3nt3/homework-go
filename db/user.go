@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/3nt3/homework/logging"
 	"github.com/3nt3/homework/structs"
 	"github.com/segmentio/ksuid"
 	"golang.org/x/crypto/bcrypt"
@@ -150,6 +151,7 @@ func scanUserRow(row *sql.Row) (structs.User, error) {
 	}
 
 	if user.MoodleToken != "" && user.MoodleURL != "" {
+		logging.InfoLogger.Printf("user does have moodle stuff, so we're getting assignments")
 		// get courses
 		user.Courses, err = GetMoodleUserCourses(user)
 		if err != nil {

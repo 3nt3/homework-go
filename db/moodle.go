@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -33,7 +34,11 @@ func GetMoodleUserCourses(user structs.User) ([]structs.Course, error) {
 
 	cacheObjs, err := GetUserCachedCourses(user)
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			cacheObjs = []structs.CachedCourse{}
+		} else {
+			return nil, err
+		}
 	}
 
 	expired := false
@@ -89,7 +94,13 @@ func GetMoodleUserCourses(user structs.User) ([]structs.Course, error) {
 		for _, mCourse := range mCourses {
 			assignments, err := GetAssignmentsByCourse(mCourse.ID)
 			if err != nil {
-				return nil, err
+				if err != sql.ErrNoRows {
+					return nil, err
+				}
+			}
+
+			if assignments == nil {
+				assignments = make([]structs.Assignment, 0)
 			}
 
 			var newCachedCourse structs.CachedCourse = structs.CachedCourse{
@@ -157,6 +168,12 @@ func updateCache(baseURL string, token string, userID ksuid.KSUID, moodleUserID 
 
 	now := time.Now()
 
+	// delete old cache
+	err = DeleteCachedCoursesPerUser(userID.String())
+	if err != nil {
+		return err
+	}
+
 	for _, mCourse := range mCourses {
 		if err != nil {
 			return err
@@ -177,11 +194,6 @@ func updateCache(baseURL string, token string, userID ksuid.KSUID, moodleUserID 
 		cacheObjs = append(cacheObjs, newCachedCourse)
 	}
 
-	// delete old cache
-	err = DeleteCachedCoursesPerUser(userID.String())
-	if err != nil {
-		return err
-	}
 
 	for _, cc := range cacheObjs {
 		err = CreateNewCacheObject(cc)
