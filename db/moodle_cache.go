@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/3nt3/homework/structs"
 	"github.com/segmentio/ksuid"
 	"time"
@@ -69,3 +70,34 @@ func CreateNewCacheObject(course structs.CachedCourse) error {
 	return err
 }
 
+// SearchUserCourses returns all user courses matching a given search term
+func SearchUserCourses(query string, user structs.User) ([]structs.CachedCourse, error) {
+	rows, err := database.Query("SELECT * FROM moodle_cache WHERE to_tsvector('german', course_json) @@ to_tsquery('german', $1) OR lower(course_json) LIKE $2", query, fmt.Sprintf("%%%s%%", query))
+	if err != nil {
+		return nil, err
+	}
+
+	// create variables
+	var courses []structs.CachedCourse
+
+	for rows.Next() {
+		var newCourse structs.CachedCourse
+		var jsonString string
+
+		// populate variables
+		err = rows.Scan(&newCourse.ID, &jsonString, &newCourse.MoodleURL, &newCourse.CachedAt, &newCourse.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		// decode json encoded course data
+		if err = json.Unmarshal([]byte(jsonString), &newCourse.Course); err != nil {
+			return nil, err
+		}
+
+		// append to array
+		courses = append(courses, newCourse)
+	}
+
+	return courses, nil
+}

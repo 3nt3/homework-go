@@ -1,22 +1,39 @@
 package main
 
 import (
+	"fmt"
 	"github.com/3nt3/homework/db"
 	"github.com/3nt3/homework/logging"
 	"github.com/3nt3/homework/routes"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 
 func main() {
 	logging.InitLoggers()
 
-	err := db.InitDatabase(false)
+
+	var port int
+	_, err := os.Stat("/.dockerenv")
+	logging.InfoLogger.Printf("err: %v", err)
+	if os.IsNotExist(err) {
+		port = 8005
+	} else {
+		port = 8000
+	}
+
+	err = db.InitDatabase(false)
+
 	if err != nil {
 		logging.ErrorLogger.Printf("error connecting to db: %v\n", err)
 		return
 	}
+
+	InterruptHandler()
 
 	r := mux.NewRouter()
 	r.Methods("OPTIONS").HandlerFunc(routes.HandleCORSPreflight)
@@ -37,6 +54,7 @@ func main() {
 
 	// /courses routes
 	r.HandleFunc("/courses/active", routes.GetActiveCourses)
+	r.HandleFunc("/courses/search/{searchterm}", routes.SearchCourses)
 
 	// /moodle routes
 	r.HandleFunc("/moodle/authenticate", routes.MoodleAuthenticate).Methods("POST")
@@ -44,7 +62,22 @@ func main() {
 	// TODO: /moodle/get-courses
 
 
-	logging.InfoLogger.Println("started server on port :8000")
-	logging.ErrorLogger.Fatalln(http.ListenAndServe(":8000", r).Error())
+	logging.InfoLogger.Printf("started server on port %d", port)
+	logging.ErrorLogger.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", port), r).Error())
 }
 
+func InterruptHandler() {
+	c := make(chan os.Signal)
+
+	signal.Notify(c, syscall.SIGINT)
+	signal.Notify(c, syscall.SIGTERM)
+	go func() {
+		<-c
+		logging.InfoLogger.Printf("closing db connection...")
+		db.CloseConnection()
+		logging.InfoLogger.Printf("done!")
+
+		logging.InfoLogger.Printf("exiting...")
+		os.Exit(0)
+	}()
+}

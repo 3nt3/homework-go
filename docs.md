@@ -3,7 +3,6 @@
 ## todo
 - [ ] `GET` `/user/{id}` gets user from `{id}`
 - [ ] `POST` `/user/logout` deletes session
-- [ ] `GET` `/username-taken/{username}` is `{username}` taken?
 - [ ] `GET` `/courses/search/{searchterm}`
 - [ ] `GET` `/moodle/get-courses` I don't really think this is used?
 - [ ] `POST` `/moodle/get-school-info`
@@ -15,7 +14,7 @@
 - [x] `POST` `/user/register` creates new user (register) (legacy route -- to be removed probably)
 - [ ] `POST` `/user/logout` deletes session
 - [x] `POST` `/user/login` authenticates user (creates session)
-- [ ] `GET` `/username-taken/{username}` is `{username}` taken?
+- [x] `GET` `/username-taken/{username}` is `{username}` taken?
 
 ## assignment
 - [x] `POST` `/assignment` creates new assignment
