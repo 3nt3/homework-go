@@ -17,16 +17,9 @@ func main() {
 	logging.InitLoggers()
 
 
-	var port int
-	_, err := os.Stat("/.dockerenv")
-	logging.InfoLogger.Printf("err: %v", err)
-	if os.IsNotExist(err) {
-		port = 8005
-	} else {
-		port = 8000
-	}
+        port := 8005
 
-	err = db.InitDatabase(false)
+        err := db.InitDatabase(false)
 
 	if err != nil {
 		logging.ErrorLogger.Printf("error connecting to db: %v\n", err)
@@ -51,6 +44,7 @@ func main() {
 	// /assignment routes
 	r.HandleFunc("/assignment", routes.CreateAssignment).Methods("POST")
 	r.HandleFunc("/assignment", routes.DeleteAssignment).Methods("DELETE")
+	r.HandleFunc("/assignments", routes.GetAssignments).Methods("GET")
 
 	// /courses routes
 	r.HandleFunc("/courses/active", routes.GetActiveCourses)

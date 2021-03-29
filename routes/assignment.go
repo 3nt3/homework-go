@@ -7,6 +7,7 @@ import (
 	"github.com/3nt3/homework/logging"
 	"github.com/3nt3/homework/structs"
 	"net/http"
+	"strconv"
 )
 
 func CreateAssignment(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +37,7 @@ func CreateAssignment(w http.ResponseWriter, r *http.Request) {
 		logging.WarningLogger.Printf("error decoding: %v\n", err)
 		_ = returnApiResponse(w, apiResponse{
 			Content: nil,
-			Errors: []string{"bad request"},
+			Errors:  []string{"bad request"},
 		}, http.StatusBadRequest)
 		return
 	}
@@ -48,14 +49,14 @@ func CreateAssignment(w http.ResponseWriter, r *http.Request) {
 		logging.ErrorLogger.Printf("error creating assignment: %v\n", err)
 		_ = returnApiResponse(w, apiResponse{
 			Content: nil,
-			Errors: []string{"internal server error"},
+			Errors:  []string{"internal server error"},
 		}, http.StatusInternalServerError)
 		return
 	}
 
 	_ = returnApiResponse(w, apiResponse{
 		Content: assignment.GetClean(),
-		Errors: []string{},
+		Errors:  []string{},
 	}, http.StatusOK)
 }
 
@@ -66,7 +67,7 @@ func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
 	if id == "" {
 		_ = returnApiResponse(w, apiResponse{
 			Content: nil,
-			Errors: []string{"bad request"},
+			Errors:  []string{"bad request"},
 		}, http.StatusBadRequest)
 		return
 	}
@@ -126,6 +127,61 @@ func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
 
 	_ = returnApiResponse(w, apiResponse{
 		Content: assignment.GetClean(),
-		Errors: []string{},
+		Errors:  []string{},
 	}, http.StatusOK)
+}
+
+func GetAssignments(w http.ResponseWriter, r *http.Request) {
+	HandleCORSPreflight(w, r)
+
+	user, authenticated, err := getUserBySession(r)
+	if err != nil {
+		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
+		_ = returnApiResponse(w, apiResponse{
+			Content: nil,
+			Errors:  []string{"internal server error"},
+		}, 500)
+		return
+	}
+
+	if !authenticated {
+		_ = returnApiResponse(w, apiResponse{
+			Content: nil,
+			Errors:  []string{"invalid session"},
+		}, 401)
+		return
+	}
+
+	var days int
+	daysString := r.URL.Query().Get("days")
+	if daysString == "" {
+		days = -1
+	} else {
+		days, err = strconv.Atoi(daysString)
+		if err != nil {
+			_ = returnApiResponse(w, apiResponse{
+				Content: nil,
+				Errors:  []string{"?days is not a valid integer"},
+			}, 400)
+			return
+		}
+	}
+
+	assignments, err := db.GetAssignments(user, days)
+	if err != nil && err != sql.ErrNoRows {
+		logging.ErrorLogger.Printf("error getting assignments session: %v\n", err)
+		_ = returnApiResponse(w, apiResponse{
+			Content: nil,
+			Errors:  []string{"internal server error"},
+		}, 500)
+		return
+	}
+
+	if assignments == nil {
+		assignments = make([]structs.Assignment, 0)
+	}
+
+	_ = returnApiResponse(w, apiResponse{
+		Content: assignments,
+	}, 200)
 }

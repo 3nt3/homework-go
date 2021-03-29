@@ -63,22 +63,23 @@ type Session struct {
 	Created time.Time   `json:"created"`
 }
 
+type JSONDate time.Time
 type Assignment struct {
-	UID        ksuid.KSUID `json:"uid"`
-	User       User        `json:"creator"`
+	UID        ksuid.KSUID `json:"id"`
+	User       User        `json:"user"`
 	Created    time.Time   `json:"created"`
 	Title      string      `json:"title"`
-	DueDate    time.Time   `json:"due_date"`
+	DueDate    JSONDate    `json:"due_date"`
 	Course     int         `json:"course"`
 	FromMoodle bool        `json:"from_moodle"`
 }
 
 type CleanAssignment struct {
-	UID        ksuid.KSUID `json:"uid"`
-	User       CleanUser   `json:"creator"`
+	UID        ksuid.KSUID `json:"id"`
+	User       CleanUser   `json:"user"`
 	Created    time.Time   `json:"created"`
 	Title      string      `json:"title"`
-	DueDate    time.Time   `json:"due_date"`
+	DueDate    JSONDate    `json:"due_date"`
 	Course     int         `json:"course"`
 	FromMoodle bool        `json:"from_moodle"`
 }

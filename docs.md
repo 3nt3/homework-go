@@ -1,12 +1,5 @@
 # routes
 
-## todo
-- [ ] `GET` `/user/{id}` gets user from `{id}`
-- [ ] `POST` `/user/logout` deletes session
-- [ ] `GET` `/courses/search/{searchterm}`
-- [ ] `GET` `/moodle/get-courses` I don't really think this is used?
-- [ ] `POST` `/moodle/get-school-info`
-
 ## user
 - [x] `GET` `/user` gets user from session cookie
 - [ ] `GET` `/user/{id}` gets user from `{id}`
@@ -21,7 +14,7 @@
 - [x] `DELETE` `/assignment?id=` deletes assignment
 
 ## course
-- [ ] `GET` `/courses/search/{searchterm}` 
+- [x] `GET` `/courses/search/{searchterm}` 
 - [x] `GET` `/courses/active` gets all courses with active assignments (only active assignments to save bandwidth)
 
 ## moodle
@@ -36,3 +29,7 @@ These endpoints would be used if non-moodle courses were currently supported in 
 - [ ] `GET` `/courses` gets all courses the current user is enrolled in
 - [ ] `POST` `/courses` creates new course
 - [ ] `POST` `/courses` creates new course
+- [ ] `GET` `/user/{id}` gets user from `{id}`
+- [ ] `POST` `/user/logout` deletes session
+- [ ] `GET` `/moodle/get-courses` I don't really think this is used?
+- [ ] `POST` `/moodle/get-school-info`
