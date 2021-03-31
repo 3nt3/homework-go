@@ -121,7 +121,6 @@ func GetMoodleUserCourses(user structs.User) ([]structs.Course, error) {
 
 	// update cache
 	go func() {
-		logging.InfoLogger.Printf("caching...")
 		if err := updateCache(baseURL, user.MoodleToken, user.ID, user.MoodleUserID); err != nil {
 			logging.WarningLogger.Printf("error updating course cache: %v\n", err)
 		}

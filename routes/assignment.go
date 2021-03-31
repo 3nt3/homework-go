@@ -12,7 +12,7 @@ import (
 
 func CreateAssignment(w http.ResponseWriter, r *http.Request) {
 	HandleCORSPreflight(w, r)
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, false)
 
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
@@ -72,7 +72,7 @@ func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, false)
 
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
@@ -134,7 +134,7 @@ func DeleteAssignment(w http.ResponseWriter, r *http.Request) {
 func GetAssignments(w http.ResponseWriter, r *http.Request) {
 	HandleCORSPreflight(w, r)
 
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, false)
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
 		_ = returnApiResponse(w, apiResponse{
@@ -179,6 +179,11 @@ func GetAssignments(w http.ResponseWriter, r *http.Request) {
 
 	if assignments == nil {
 		assignments = make([]structs.Assignment, 0)
+	}
+
+	var cleanAssignments []structs.CleanAssignment
+	for _, a := range assignments {
+		cleanAssignments = append(cleanAssignments, a.GetClean())
 	}
 
 	_ = returnApiResponse(w, apiResponse{

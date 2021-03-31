@@ -11,7 +11,7 @@ import (
 func MoodleAuthenticate(w http.ResponseWriter, r *http.Request) {
 	HandleCORSPreflight(w, r)
 
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, false)
 	if err != nil {
 		logging.WarningLogger.Printf("error getting user by session: %v\n", err)
 		_ = returnApiResponse(w, apiResponse{
@@ -116,7 +116,7 @@ func MoodleAuthenticate(w http.ResponseWriter, r *http.Request) {
 
 	id := int(idInterface.(float64))
 
-	updatedUser, err := db.UpdateMoodleData(user, loginData.URL, tokenResp.Token, id)
+	updatedUser, err := db.UpdateMoodleData(user, loginData.URL, tokenResp.Token, id, false)
 	if err != nil {
 		_ = returnApiResponse(w, apiResponse{
 			Content: nil,

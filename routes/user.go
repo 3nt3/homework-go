@@ -90,7 +90,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := db.GetUserById(id)
+	user, err := db.GetUserById(id, false)
 	if err != nil {
 		logging.ErrorLogger.Printf("error fetching user from db: %v\n", err)
 		if err != sql.ErrNoRows {
@@ -163,7 +163,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	HandleCORSPreflight(w, r)
 
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, true)
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
 		_ = returnApiResponse(w, apiResponse{

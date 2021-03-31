@@ -7,13 +7,14 @@ import (
 	"github.com/3nt3/homework/structs"
 	"github.com/gorilla/mux"
 	"net/http"
+	"time"
 )
 
 // TODO: return all courses with assignments whose due dates lie in the future
 func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 	HandleCORSPreflight(w, r)
 
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, false)
 	if err != nil {
 		logging.ErrorLogger.Printf("error getting user by session: %v\n", err)
 		_ = returnApiResponse(w, apiResponse{
@@ -45,8 +46,23 @@ func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 		logging.ErrorLogger.Printf("error: %v\n", err)
 	}
 
-	var cleanCourses = make([]structs.CleanCourse, 0)
+	var filteredCourses []structs.Course
 	for _, c := range courses {
+		var filteredAssignments []structs.Assignment
+		for _, a := range c.Assignments {
+			if time.Time(a.DueDate).Truncate(24 * time.Hour).After(time.Now().Truncate(24 * time.Hour)) || time.Time(a.DueDate).Truncate(24 *time.Hour).Equal(time.Now().Truncate(24 * time.Hour)) {
+				filteredAssignments = append(filteredAssignments, a)
+			}
+		}
+
+		if len(filteredAssignments) > 0 {
+			c.Assignments = filteredAssignments
+			filteredCourses = append(filteredCourses, c)
+		}
+	}
+
+	var cleanCourses = make([]structs.CleanCourse, 0)
+	for _, c := range filteredCourses {
 		cleanCourses = append(cleanCourses, c.GetClean())
 	}
 
@@ -59,7 +75,7 @@ func GetActiveCourses(w http.ResponseWriter, r *http.Request) {
 func SearchCourses(w http.ResponseWriter, r *http.Request) {
 	HandleCORSPreflight(w, r)
 
-	user, authenticated, err := getUserBySession(r)
+	user, authenticated, err := getUserBySession(r, false)
 	if !authenticated {
 		if err != nil {
 			logging.ErrorLogger.Printf("error getting user by session: %v\n", err)

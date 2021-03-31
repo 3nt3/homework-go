@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/3nt3/homework/logging"
 	"github.com/3nt3/homework/structs"
 	"github.com/segmentio/ksuid"
 	"golang.org/x/crypto/bcrypt"
@@ -34,13 +33,13 @@ func NewUser(username string, email string, password string) (structs.User, erro
 	}, nil
 }
 
-func GetUserByUsername(username string) (structs.User, error) {
+func GetUserByUsername(username string, getCourses bool) (structs.User, error) {
 	row := database.QueryRow("select * from users where username = $1;", username)
 	if row.Err() != nil {
 		return structs.User{}, row.Err()
 	}
 
-	return scanUserRow(row)
+	return scanUserRow(row, getCourses)
 }
 
 /*
@@ -61,18 +60,18 @@ func GetUserByEmail(email string ) (structs.User, error) {
 
 */
 
-func GetUserById(id string) (structs.User, error) {
+func GetUserById(id string, getCourses bool) (structs.User, error) {
 	row := database.QueryRow("SELECT * FROM users WHERE id = $1", id)
 	if row.Err() != nil {
 		return structs.User{}, row.Err()
 	}
 
-	return scanUserRow(row)
+	return scanUserRow(row, getCourses)
 }
 
 func Authenticate(username string, password string) (structs.User, bool, error) {
 	// get user by username
-	user, err := GetUserByUsername(username)
+	user, err := GetUserByUsername(username, false)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return user, false, nil
@@ -96,7 +95,7 @@ func Authenticate(username string, password string) (structs.User, bool, error) 
 	return user, true, nil
 }
 
-func GetUserBySession(sessionId string) (structs.User, bool, error) {
+func GetUserBySession(sessionId string, getCourses bool) (structs.User, bool, error) {
 	row := database.QueryRow("SELECT * FROM sessions WHERE uid = $1", sessionId)
 	if row.Err() != nil {
 		return structs.User{}, false, row.Err()
@@ -113,7 +112,7 @@ func GetUserBySession(sessionId string) (structs.User, bool, error) {
 		return structs.User{}, false, nil
 	}
 
-	user, err := GetUserById(session.UserID.String())
+	user, err := GetUserById(session.UserID.String(), getCourses)
 
 	go deleteOldSessions(structs.MaxSessionAge)
 
@@ -125,7 +124,7 @@ func hashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func UpdateMoodleData(user structs.User, moodleURL string, token string, moodleUserID int) (structs.User, error) {
+func UpdateMoodleData(user structs.User, moodleURL string, token string, moodleUserID int, getCourses bool) (structs.User, error) {
 	_, err := database.Exec("UPDATE users SET moodle_url = $1, moodle_token = $2, moodle_user_id = $3 WHERE id = $4", moodleURL, token, moodleUserID, user.ID.String())
 
 	if err != nil {
@@ -133,10 +132,10 @@ func UpdateMoodleData(user structs.User, moodleURL string, token string, moodleU
 	}
 
 	// return user
-	return GetUserById(user.ID.String())
+	return GetUserById(user.ID.String(), getCourses)
 }
 
-func scanUserRow(row *sql.Row) (structs.User, error) {
+func scanUserRow(row *sql.Row, getCourses bool) (structs.User, error) {
 	var courseIds []int
 	var coursesJson string
 	var user structs.User
@@ -150,9 +149,7 @@ func scanUserRow(row *sql.Row) (structs.User, error) {
 		return structs.User{}, err
 	}
 
-	if user.MoodleToken != "" && user.MoodleURL != "" {
-		logging.InfoLogger.Printf("user does have moodle stuff, so we're getting assignments")
-		// get courses
+	if user.MoodleToken != "" && user.MoodleURL != "" && getCourses {
 		user.Courses, err = GetMoodleUserCourses(user)
 		if err != nil {
 			return user, err

@@ -14,6 +14,8 @@ func GetUserCachedCourses(user structs.User) ([]structs.CachedCourse, error) {
 	// get all cached moodle courses where moodle_url == the users moodle url and the userID == user.id
 	query := "SELECT * FROM moodle_cache WHERE moodle_url = $1 AND user_id = $2"
 	rows, err := database.Query(query, user.MoodleURL, user.ID)
+	defer rows.Close()
+
 	if err != nil {
 		return courses, nil
 	}
@@ -32,6 +34,12 @@ func GetUserCachedCourses(user structs.User) ([]structs.CachedCourse, error) {
 
 		// decode json encoded course data
 		if err = json.Unmarshal([]byte(jsonString), &newCourse.Course); err != nil {
+			return nil, err
+		}
+
+		// get assignments
+		newCourse.Course.Assignments, err = GetAssignmentsByCourse(int(newCourse.Course.ID.(float64)))
+		if err != nil {
 			return nil, err
 		}
 
