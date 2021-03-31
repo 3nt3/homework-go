@@ -1,32 +1,77 @@
 package main
 
 import (
-	"github.com/3nt3/homework/color"
-	"io"
-	"log"
+	"fmt"
+	"github.com/3nt3/homework/db"
+	"github.com/3nt3/homework/logging"
+	"github.com/3nt3/homework/routes"
+	"github.com/gorilla/mux"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
-var (
-	WarningLogger *log.Logger
-	InfoLogger    *log.Logger
-	ErrorLogger   *log.Logger
-)
 
 func main() {
-	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	logging.InitLoggers()
+
+
+        port := 8005
+
+        err := db.InitDatabase(false)
+
 	if err != nil {
-		log.Fatal(err)
+		logging.ErrorLogger.Printf("error connecting to db: %v\n", err)
+		return
 	}
 
-	mw := io.MultiWriter(file, os.Stdout)
+	InterruptHandler()
 
-	WarningLogger = log.New(mw, color.Yellow+"[WARNING] "+color.Reset, log.Ldate|log.Ltime|log.Lshortfile)
-	InfoLogger = log.New(mw, "[INFO] ", log.Ldate|log.Ltime|log.Lshortfile)
-	ErrorLogger = log.New(mw, color.Red+"[ERROR] "+color.Reset, log.Ldate|log.Ltime|log.Lshortfile)
+	r := mux.NewRouter()
+	r.Methods("OPTIONS").HandlerFunc(routes.HandleCORSPreflight)
+
+	// /user routes
+	r.HandleFunc("/user/register", routes.NewUser).Methods("POST")
+	r.HandleFunc("/user", routes.GetUser).Methods("GET")
+	r.HandleFunc("/user/{id}", routes.GetUserById).Methods("GET")
+	r.HandleFunc("/user/login", routes.Login).Methods("POST")
+
+	// misc
+	r.HandleFunc("/username-taken/{username}", routes.UsernameTaken)
+	r.HandleFunc("/email-taken/{email}", routes.EmailTaken)
+
+	// /assignment routes
+	r.HandleFunc("/assignment", routes.CreateAssignment).Methods("POST")
+	r.HandleFunc("/assignment", routes.DeleteAssignment).Methods("DELETE")
+	r.HandleFunc("/assignments", routes.GetAssignments).Methods("GET")
+
+	// /courses routes
+	r.HandleFunc("/courses/active", routes.GetActiveCourses)
+	r.HandleFunc("/courses/search/{searchterm}", routes.SearchCourses)
+
+	// /moodle routes
+	r.HandleFunc("/moodle/authenticate", routes.MoodleAuthenticate).Methods("POST")
+	// TODO: /moodle/get-school-info
+	// TODO: /moodle/get-courses
 
 
-	WarningLogger.Println("test")
-	ErrorLogger.Println("test")
-	InfoLogger.Println("test")
+	logging.InfoLogger.Printf("started server on port %d", port)
+	logging.ErrorLogger.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", port), r).Error())
+}
+
+func InterruptHandler() {
+	c := make(chan os.Signal)
+
+	signal.Notify(c, syscall.SIGINT)
+	signal.Notify(c, syscall.SIGTERM)
+	go func() {
+		<-c
+		logging.InfoLogger.Printf("closing db connection...")
+		db.CloseConnection()
+		logging.InfoLogger.Printf("done!")
+
+		logging.InfoLogger.Printf("exiting...")
+		os.Exit(0)
+	}()
 }

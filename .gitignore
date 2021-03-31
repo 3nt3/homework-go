@@ -1,2 +1,5 @@
 .idea
 homework
+.env
+logs.txt
+**/logs.txt
