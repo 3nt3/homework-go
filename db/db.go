@@ -12,7 +12,6 @@ const (
 	host     = "db"
 	port     = 5432
 	user     = "homework"
-	password = "jQjZKKftp5pXs4f23c2APfobctMSjPRFX8h3W2q69GgfixWBeXdYxXhfaxePKqSi"
 	dbname   = "homework"
 )
 
@@ -20,6 +19,8 @@ var database *sql.DB
 
 func InitDatabase(testing bool) error {
 	logging.InfoLogger.Printf("connecting to database...\n")
+
+	password := os.Getenv("DBPASSWORD")
 
 	var psqlconn string
 	if !testing {
